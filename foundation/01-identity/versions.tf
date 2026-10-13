@@ -5,7 +5,6 @@ terraform {
     bucket       = "busdata-tfstate-126679583034"
     key          = "foundation/01-identity.tfstate"
     region       = "us-east-1"
-    profile      = "busdata-shared"
     encrypt      = true
     use_lockfile = true
   }

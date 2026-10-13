@@ -60,6 +60,28 @@ resource "aws_s3_bucket_lifecycle_configuration" "tfstate" {
 
 data "aws_iam_policy_document" "tfstate" {
   statement {
+    sid    = "PermiteContasDaOrganizacao"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+    ]
+    resources = [aws_s3_bucket.tfstate.arn, "${aws_s3_bucket.tfstate.arn}/*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalOrgID"
+      values   = ["o-xwvmqsx7av"]
+    }
+  }
+  statement {
     sid       = "NegaTrafegoSemTLS"
     effect    = "Deny"
     actions   = ["s3:*"]
