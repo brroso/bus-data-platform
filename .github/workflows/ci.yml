@@ -46,34 +46,34 @@ jobs:
         run: |
           pip install checkov
           checkov -d . --framework terraform --quiet
-plan:
-  needs: static-checks
-  runs-on: ubuntu-latest
-  permissions:
-    id-token: write
-    contents: read
-  strategy:
-    fail-fast: false
-    matrix:
-      dir: [00-organization, 01-identity, 03-budgets]
-  env:
-    TF_VAR_email_user: ${{ secrets.TF_VAR_EMAIL_USER }}
-    TF_VAR_email_domain: ${{ secrets.TF_VAR_EMAIL_DOMAIN }}
-    TF_VAR_alert_email: ${{ secrets.TF_VAR_ALERT_EMAIL }}
-  steps:
-    - uses: actions/checkout@v4
+  plan:
+    needs: static-checks
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: [00-organization, 01-identity, 03-budgets]
+    env:
+      TF_VAR_email_user: ${{ secrets.TF_VAR_EMAIL_USER }}
+      TF_VAR_email_domain: ${{ secrets.TF_VAR_EMAIL_DOMAIN }}
+      TF_VAR_alert_email: ${{ secrets.TF_VAR_ALERT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
 
-    - uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
-        aws-region: sa-east-1
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: sa-east-1
 
-    - uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: "1.13.3"   # a mesma do job anterior
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.3"   # a mesma do job anterior
 
-    - name: terraform init
-      run: terraform -chdir=foundation/${{ matrix.dir }} init -input=false
+      - name: terraform init
+        run: terraform -chdir=foundation/${{ matrix.dir }} init -input=false
 
-    - name: terraform plan
-      run: terraform -chdir=foundation/${{ matrix.dir }} plan -input=false -lock=false
+      - name: terraform plan
+        run: terraform -chdir=foundation/${{ matrix.dir }} plan -input=false -lock=false
