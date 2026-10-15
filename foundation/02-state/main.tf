@@ -5,6 +5,10 @@ locals {
 }
 
 resource "aws_s3_bucket" "tfstate" {
+  #checkov:skip=CKV_AWS_18: logs de acesso exigiriam outro bucket; chamadas ja ficam no CloudTrail
+  #checkov:skip=CKV_AWS_144: state recuperavel por versionamento e terraform import; replicacao nao compensa o custo
+  #checkov:skip=CKV_AWS_145: SSE-S3 basta; KMS exigiria liberar a chave para a organizacao e custa por chave
+  #checkov:skip=CKV2_AWS_62: nenhum consumidor de eventos do bucket de state
   bucket = local.bucket_name
 
   lifecycle {
